@@ -1,0 +1,49 @@
+<%= link_to "Back", posts_path %>
+<h1><%= @post.title %></h1>
+<p><%= @post.body %></p>
+<% if @post.image.attached? %>
+    <%= image_tag @post.image, width: 400 %>
+<% end %>
+
+<% if liked?(@post) %>
+  <%= button_to "Unlike", post_like_path(@post, @post.likes.find_by(user: current_user)), method: :delete %>
+<% else %>
+  <%= button_to "Like", post_likes_path(@post) %>
+<% end %>
+
+
+<%= link_to "Edit Post", edit_post_path(@post) %>
+<%= link_to "Delete Post", post_path(@post), data: {turbo_method: :delete, turbo_confirm: "Are you sure?"} %>
+
+
+
+<h2>Comments</h2>
+
+<% @post.comments.order(created_at: :desc).each do |comment| %>
+<p>
+    <%= comment.body %> 
+    <%= link_to "Delete Comment", post_comment_path(@post,comment),
+        data: {turbo_method: :delete, turbo_confirm: "Are u sure?"} %>
+</p>
+<% if liked?(comment) %>
+      <%= button_to "Unlike", post_comment_like_path(@post, comment, comment.likes.find_by(user: current_user)), method: :delete %>
+    <% else %>
+      <%= button_to "Like", post_comment_likes_path(@post, comment) %>
+    <% end %>
+<% end %>
+
+<hr>
+
+<% if @comment && @comment.errors.any? %>
+    <% @comment.errors.full_messages.each do |message| %>
+       <p> <%= message %> </p>
+    <% end %>
+<% end %>
+
+<h3> Add Comment </h3>
+
+<%= form_with model: [@post, @comment] do |form| %>
+    <%= form.label :body %>
+    <%= form.text_area :body %>
+    <%= form.submit "Add Comment" %>
+<% end %>

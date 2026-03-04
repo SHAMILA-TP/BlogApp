@@ -1,0 +1,15 @@
+<% if @post.errors.any? %>
+    <% @post.errors.full_messages.each do |message| %>
+        <ul><li><%= message %> </li></ul>
+    <% end %>
+<% end %>
+<%= form_with model: @post do |form| %>
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+    <%= form.label :body %>
+    <%= form.text_area :body %>
+    <%= form.label :image %>
+    <%= form.file_field :image %>
+    <%= form.submit @post.persisted? ? "Update Post" : "Create post" %>
+<%= link_to "Back", posts_path %>
+<% end %>
